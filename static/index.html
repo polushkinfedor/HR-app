@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR System - Управление персоналом</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+        }
+        
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .logo-text .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+        
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* ===== MAIN CONTAINER ===== */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        
+        .tab-btn i {
+            font-size: 1.1rem;
+        }
+        
+        /* ===== MESSAGES ===== */
+        .message {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        /* ===== TAB CONTENT ===== */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ===== GRID LAYOUT ===== */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ===== CARDS ===== */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header h2 {
+            font-size: 1.25rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .card-header h2 i {
+            color: #3b82f6;
+        }
+        
+        /* ===== FORMS ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 576px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+            background: #f8fafc;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-control::placeholder {
+            color: #94a3b8;
+        }
+        
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn i {
+            font-size: 1.1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* ===== FILTERS ===== */
+        .filters {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        /* ===== TABLES ===== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        
+        .data-table thead {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+        
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.9rem;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+        
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* ===== ACTIONS IN TABLE ===== */
+        .table-actions {
+            display: flex;
+            gap: 0.25rem;
+            justify-content: flex-end;
+        }
+        
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            color: #64748b;
+            background: #f1f5f9;
+        }
+        
+        .action-btn:hover {
+            background: #e2e8f0;
+            color: #475569;
+            transform: scale(1.05);
+        }
+        
+        .action-btn.view:hover {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+        
+        .action-btn.delete:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+        
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state p {
+            font-size: 1rem;
+        }
+        
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-icon.departments {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
+        .stat-icon.positions {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .stat-icon.employees {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+        
+        .stat-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-content p {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        /* ===== LOADING ===== */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+        
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.25rem;
+            color: #1e293b;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+        
+        .modal-close:hover {
+            background: #f1f5f9;
+            color: #475569;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .footer-links a {
+            color: #3b82f6;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab-btn {
+                flex: 1 0 calc(50% - 0.5rem);
+            }
+            
+            .data-table td,
+            .data-table th {
+                padding: 0.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tab-btn {
+                flex: 1 0 100%;
+            }
+            
+            .filters {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🏢</div>
+                <div class="logo-text">
+                    <h1>HR System</h1>
+                    <div class="subtitle">Управление персоналом предприятия</div>
+                </div>
+            </div>
+            <div class="system-status">
+                <div class="status-dot"></div>
+                <span id="status-text">Загрузка...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Messages -->
+        <div id="message" class="message"></div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon departments">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="dept-count">0</h3>
+                    <p>Отделов</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon positions">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="pos-count">0</h3>
+                    <p>Должностей</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon employees">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="emp-count">0</h3>
+                    <p>Сотрудников</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('employees')">
+                <i class="fas fa-users"></i>
+                <span>Сотрудники</span>
+            </button>
+            <button class="tab-btn" onclick="showTab('departments')">
+                <i class="fas fa-building"></i>
+                <span>Отделы</span>
+            </button>
+            <button class="tab-btn" onclick="showTab('positions')">
+                <i class="fas fa-briefcase"></i>
+                <span>Должности</span>
+            </button>
+            <button class="tab-btn" onclick="showTab('salary')">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Зарплата</span>
+            </button>
+        </div>
+
+        <!-- Employees Tab -->
+        <div id="employees-tab" class="tab-content active">
+            <div class="grid-2col">
+                <!-- Add Employee Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user-plus"></i> Добавить сотрудника</h2>
+                    </div>
+                    <form id="add-employee-form" onsubmit="addEmployee(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="first-name">Имя *</label>
+                                <input type="text" id="first-name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="last-name">Фамилия *</label>
+                                <input type="text" id="last-name" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="middle-name">Отчество</label>
+                            <input type="text" id="middle-name" class="form-control">
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="department">Отдел *</label>
+                                <select id="department" class="form-control" required>
+                                    <option value="">Выберите отдел</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="position">Должность *</label>
+                                <select id="position" class="form-control" required>
+                                    <option value="">Выберите должность</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="hire-date">Дата приема *</label>
+                                <input type="date" id="hire-date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary">Зарплата (₽) *</label>
+                                <input type="number" id="salary" class="form-control" min="0" step="1000" required>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-user-plus"></i> Добавить сотрудника
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> Очистить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Employees List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-list"></i> Список сотрудников</h2>
+                    </div>
+                    
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label>Фильтр по отделу:</label>
+                            <select id="filter-department" class="form-control" onchange="loadEmployees()">
+                                <option value="">Все отделы</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Фильтр по должности:</label>
+                            <select id="filter-position" class="form-control" onchange="loadEmployees()">
+                                <option value="">Все должности</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ФИО</th>
+                                    <th>Отдел</th>
+                                    <th>Должность</th>
+                                    <th>Зарплата</th>
+                                    <th style="width: 100px;">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employees-list">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="loading-spinner"></div>
+                                        Загрузка данных...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button onclick="loadEmployees()" class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Departments Tab -->
+        <div id="departments-tab" class="tab-content">
+            <div class="grid-2col">
+                <!-- Add Department Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-building"></i> Добавить отдел</h2>
+                    </div>
+                    <form id="add-department-form" onsubmit="addDepartment(event)">
+                        <div class="form-group">
+                            <label for="dept-name">Название отдела *</label>
+                            <input type="text" id="dept-name" class="form-control" placeholder="IT отдел" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dept-code">Код отдела *</label>
+                            <input type="text" id="dept-code" class="form-control" placeholder="IT, HR, SALES" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dept-description">Описание</label>
+                            <textarea id="dept-description" class="form-control" placeholder="Описание отдела"></textarea>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Добавить отдел
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Departments List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-list"></i> Список отделов</h2>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Код</th>
+                                    <th>Название</th>
+                                    <th>Описание</th>
+                                    <th style="width: 80px;">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departments-list">
+                                <tr>
+                                    <td colspan="4" class="loading">
+                                        <div class="loading-spinner"></div>
+                                        Загрузка данных...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button onclick="loadDepartments()" class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Positions Tab -->
+        <div id="positions-tab" class="tab-content">
+            <div class="grid-2col">
+                <!-- Add Position Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-briefcase"></i> Добавить должность</h2>
+                    </div>
+                    <form id="add-position-form" onsubmit="addPosition(event)">
+                        <div class="form-group">
+                            <label for="position-name">Название должности *</label>
+                            <input type="text" id="position-name" class="form-control" placeholder="Менеджер по продажам" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="position-grade">Грейд</label>
+                            <input type="text" id="position-grade" class="form-control" placeholder="Junior, Middle, Senior">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="position-description">Описание</label>
+                            <textarea id="position-description" class="form-control" placeholder="Описание должности"></textarea>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Добавить должность
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Positions List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-list"></i> Список должностей</h2>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Название</th>
+                                    <th>Грейд</th>
+                                    <th>Описание</th>
+                                    <th style="width: 80px;">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="positions-list">
+                                <tr>
+                                    <td colspan="4" class="loading">
+                                        <div class="loading-spinner"></div>
+                                        Загрузка данных...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button onclick="loadPositions()" class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i> Обновить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Salary Tab -->
+        <div id="salary-tab" class="tab-content">
+            <div class="grid-2col">
+                <!-- Update Salary Form -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-money-bill-wave"></i> Изменить зарплату</h2>
+                    </div>
+                    <form id="update-salary-form" onsubmit="updateSalary(event)">
+                        <div class="form-group">
+                            <label for="employee-select">Сотрудник *</label>
+                            <select id="employee-select" class="form-control" required>
+                                <option value="">Выберите сотрудника</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="new-salary">Новая зарплата (₽) *</label>
+                                <input type="number" id="new-salary" class="form-control" min="0" step="1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="salary-date">Дата изменения *</label>
+                                <input type="date" id="salary-date" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="salary-reason">Причина изменения</label>
+                            <textarea id="salary-reason" class="form-control" placeholder="Повышение, Индексация, Премия..."></textarea>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> Изменить зарплату
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Salary History -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history"></i> История зарплат</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Выберите сотрудника:</label>
+                        <select id="history-employee" class="form-control" onchange="loadSalaryHistory()">
+                            <option value="">Выберите сотрудника</option>
+                        </select>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Зарплата</th>
+                                    <th>Причина</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salary-history">
+                                <tr>
+                                    <td colspan="3" class="empty-state">
+                                        <i class="fas fa-history"></i>
+                                        <p>Выберите сотрудника для просмотра истории</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Employee Details -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Информация о сотруднике</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>HR System v1.0 | Курсовая работа по дисциплине "Технологии сетевого взаимодействия"</p>
+        <p>Студент группы М7О-507С-21 | МАИ 2024</p>
+        <div class="footer-links">
+            <a href="/docs" target="_blank">API Документация</a>
+            <a href="#" onclick="checkSystemStatus()">Проверить статус</a>
+        </div>
+    </footer>
+
+    <script>
+        // Базовый URL API
+        const API_URL = '';
+
+        // Состояние приложения
+        let appState = {
+            departments: [],
+            positions: [],
+            employees: [],
+            selectedEmployee: null
+        };
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('HR System инициализирован');
+            
+            // Устанавливаем сегодняшнюю дату по умолчанию
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('hire-date').value = today;
+            document.getElementById('salary-date').value = today;
+            
+            // Загружаем начальные данные
+            checkSystemStatus();
+            loadInitialData();
+            
+            // Закрытие модального окна при клике вне его
+            document.getElementById('employee-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        });
+
+        // ========== УТИЛИТЫ ==========
+        function showMessage(text, type = 'success') {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            msg.style.display = 'block';
+            
+            // Автоматическое скрытие
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="loading">
+                            <div class="loading-spinner"></div>
+                            Загрузка данных...
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function showEmptyState(elementId, message = 'Нет данных') {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>${message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // ========== СИСТЕМНЫЕ ФУНКЦИИ ==========
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    document.getElementById('status-text').textContent = 'Система активна';
+                } else {
+                    document.getElementById('status-text').textContent = 'Ошибка API';
+                }
+            } catch (error) {
+                document.getElementById('status-text').textContent = 'Нет подключения';
+            }
+        }
+
+        async function loadInitialData() {
+            try {
+                await Promise.all([
+                    loadDepartments(),
+                    loadPositions(),
+                    loadEmployees()
+                ]);
+                
+                // Обновляем выпадающие списки
+                updateDepartmentSelects();
+                updatePositionSelects();
+                loadEmployeesForSalary();
+            } catch (error) {
+                console.error('Ошибка при загрузке данных:', error);
+                showMessage('Ошибка при загрузке данных', 'error');
+            }
+        }
+
+        // ========== УПРАВЛЕНИЕ ВКЛАДКАМИ ==========
+        function showTab(tabName) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Снять активный класс со всех кнопок
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Показать выбранную вкладку
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Активировать соответствующую кнопку
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            
+            // Загрузить данные для вкладки если нужно
+            if (tabName === 'salary') {
+                loadEmployeesForSalary();
+            }
+        }
+
+        // ========== ОТДЕЛЫ ==========
+        async function loadDepartments() {
+            showLoading('departments-list');
+            
+            try {
+                const response = await fetch(`${API_URL}/departments`);
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                
+                appState.departments = await response.json();
+                renderDepartmentsTable();
+                
+                // Обновляем счетчик
+                document.getElementById('dept-count').textContent = appState.departments.length;
+            } catch (error) {
+                console.error('Ошибка при загрузке отделов:', error);
+                showEmptyState('departments-list', 'Ошибка загрузки отделов');
+            }
+        }
+
+        function renderDepartmentsTable() {
+            const tbody = document.getElementById('departments-list');
+            
+            if (!appState.departments.length) {
+                showEmptyState('departments-list', 'Нет отделов');
+                return;
+            }
+            
+            tbody.innerHTML = appState.departments.map(dept => `
+                <tr>
+                    <td><strong>${dept.code}</strong></td>
+                    <td>${dept.name}</td>
+                    <td>${dept.description || '-'}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button onclick="deleteDepartment('${dept.id}')" 
+                                    class="action-btn delete" 
+                                    title="Удалить отдел">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function addDepartment(e) {
+            e.preventDefault();
+            
+            const department = {
+                name: document.getElementById('dept-name').value.trim(),
+                code: document.getElementById('dept-code').value.trim().toUpperCase(),
+                description: document.getElementById('dept-description').value.trim() || null
+            };
+            
+            // Валидация
+            if (!department.name || !department.code) {
+                showMessage('Заполните обязательные поля', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/departments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(department)
+                });
+                
+                if (response.ok) {
+                    showMessage(`Отдел "${department.code}" успешно создан`);
+                    document.getElementById('add-department-form').reset();
+                    
+                    // Перезагружаем данные
+                    await loadDepartments();
+                    updateDepartmentSelects();
+                    loadEmployees(); // Обновляем список сотрудников
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при создании отдела', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при создании отдела', 'error');
+            }
+        }
+
+        async function deleteDepartment(id) {
+            if (!confirm('Вы уверены, что хотите удалить этот отдел?\nЕсли в отделе есть сотрудники, удаление будет невозможно.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/departments/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showMessage('Отдел успешно удален');
+                    
+                    // Перезагружаем данные
+                    await loadDepartments();
+                    updateDepartmentSelects();
+                    loadEmployees();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при удалении отдела', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при удалении отдела', 'error');
+            }
+        }
+
+        function updateDepartmentSelects() {
+            // Для формы добавления сотрудника
+            const select = document.getElementById('department');
+            select.innerHTML = '<option value="">Выберите отдел</option>';
+            
+            // Для фильтра сотрудников
+            const filterSelect = document.getElementById('filter-department');
+            filterSelect.innerHTML = '<option value="">Все отделы</option>';
+            
+            appState.departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.code;
+                option.textContent = `${dept.code} - ${dept.name}`;
+                select.appendChild(option);
+                
+                const filterOption = option.cloneNode(true);
+                filterSelect.appendChild(filterOption);
+            });
+        }
+
+        // ========== ДОЛЖНОСТИ ==========
+        async function loadPositions() {
+            showLoading('positions-list');
+            
+            try {
+                const response = await fetch(`${API_URL}/positions`);
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                
+                appState.positions = await response.json();
+                renderPositionsTable();
+                
+                // Обновляем счетчик
+                document.getElementById('pos-count').textContent = appState.positions.length;
+            } catch (error) {
+                console.error('Ошибка при загрузке должностей:', error);
+                showEmptyState('positions-list', 'Ошибка загрузки должностей');
+            }
+        }
+
+        function renderPositionsTable() {
+            const tbody = document.getElementById('positions-list');
+            
+            if (!appState.positions.length) {
+                showEmptyState('positions-list', 'Нет должностей');
+                return;
+            }
+            
+            tbody.innerHTML = appState.positions.map(pos => `
+                <tr>
+                    <td><strong>${pos.name}</strong></td>
+                    <td>${pos.grade || '-'}</td>
+                    <td>${pos.description || '-'}</td>
+                    <td>
+                        <div class="table-actions">
+                            <button onclick="deletePosition('${pos.id}')" 
+                                    class="action-btn delete" 
+                                    title="Удалить должность">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function addPosition(e) {
+            e.preventDefault();
+            
+            const position = {
+                name: document.getElementById('position-name').value.trim(),
+                grade: document.getElementById('position-grade').value.trim() || null,
+                description: document.getElementById('position-description').value.trim() || null
+            };
+            
+            // Валидация
+            if (!position.name) {
+                showMessage('Введите название должности', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/positions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(position)
+                });
+                
+                if (response.ok) {
+                    showMessage(`Должность "${position.name}" успешно создана`);
+                    document.getElementById('add-position-form').reset();
+                    
+                    // Перезагружаем данные
+                    await loadPositions();
+                    updatePositionSelects();
+                    loadEmployees(); // Обновляем список сотрудников
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при создании должности', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при создании должности', 'error');
+            }
+        }
+
+        async function deletePosition(id) {
+            if (!confirm('Вы уверены, что хотите удалить эту должность?\nЕсли есть сотрудники на этой должности, удаление будет невозможно.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/positions/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showMessage('Должность успешно удалена');
+                    
+                    // Перезагружаем данные
+                    await loadPositions();
+                    updatePositionSelects();
+                    loadEmployees();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при удалении должности', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при удалении должности', 'error');
+            }
+        }
+
+        function updatePositionSelects() {
+            // Для формы добавления сотрудника
+            const select = document.getElementById('position');
+            select.innerHTML = '<option value="">Выберите должность</option>';
+            
+            // Для фильтра сотрудников
+            const filterSelect = document.getElementById('filter-position');
+            filterSelect.innerHTML = '<option value="">Все должности</option>';
+            
+            appState.positions.forEach(pos => {
+                const option = document.createElement('option');
+                option.value = pos.name;
+                option.textContent = `${pos.name}${pos.grade ? ` (${pos.grade})` : ''}`;
+                select.appendChild(option);
+                
+                const filterOption = option.cloneNode(true);
+                filterSelect.appendChild(filterOption);
+            });
+        }
+
+        // ========== СОТРУДНИКИ ==========
+        async function loadEmployees() {
+            showLoading('employees-list');
+            
+            const departmentFilter = document.getElementById('filter-department').value;
+            const positionFilter = document.getElementById('filter-position').value;
+            
+            try {
+                let url = `${API_URL}/employees`;
+                const params = new URLSearchParams();
+                
+                if (departmentFilter) params.append('department', departmentFilter);
+                if (positionFilter) params.append('position', positionFilter);
+                
+                if (params.toString()) {
+                    url += `?${params.toString()}`;
+                }
+                
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                
+                appState.employees = await response.json();
+                renderEmployeesTable();
+                
+                // Обновляем счетчик
+                document.getElementById('emp-count').textContent = appState.employees.length;
+            } catch (error) {
+                console.error('Ошибка при загрузке сотрудников:', error);
+                showEmptyState('employees-list', 'Ошибка загрузки сотрудников');
+            }
+        }
+
+        function renderEmployeesTable() {
+            const tbody = document.getElementById('employees-list');
+            
+            if (!appState.employees.length) {
+                showEmptyState('employees-list', 'Нет сотрудников');
+                return;
+            }
+            
+            tbody.innerHTML = appState.employees.map(emp => `
+                <tr>
+                    <td>
+                        <strong>${emp.last_name} ${emp.first_name}</strong>
+                        ${emp.middle_name ? `<br><small>${emp.middle_name}</small>` : ''}
+                    </td>
+                    <td>${emp.department_code}${emp.department_name ? `<br><small>${emp.department_name}</small>` : ''}</td>
+                    <td>${emp.position_name}${emp.position_grade ? `<br><small>${emp.position_grade}</small>` : ''}</td>
+                    <td><strong>${formatSalary(emp.salary)}</strong></td>
+                    <td>
+                        <div class="table-actions">
+                            <button onclick="showEmployeeDetails('${emp.id}')" 
+                                    class="action-btn view" 
+                                    title="Просмотр">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button onclick="deleteEmployee('${emp.id}')" 
+                                    class="action-btn delete" 
+                                    title="Удалить сотрудника">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function addEmployee(e) {
+            e.preventDefault();
+            
+            const employee = {
+                first_name: document.getElementById('first-name').value.trim(),
+                last_name: document.getElementById('last-name').value.trim(),
+                middle_name: document.getElementById('middle-name').value.trim() || null,
+                department_code: document.getElementById('department').value,
+                position_name: document.getElementById('position').value,
+                hire_date: document.getElementById('hire-date').value,
+                salary: parseInt(document.getElementById('salary').value)
+            };
+            
+            // Валидация
+            if (!employee.first_name || !employee.last_name || !employee.department_code || 
+                !employee.position_name || !employee.hire_date || !employee.salary) {
+                showMessage('Заполните все обязательные поля', 'error');
+                return;
+            }
+            
+            if (employee.salary <= 0) {
+                showMessage('Зарплата должна быть положительной', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/employees`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(employee)
+                });
+                
+                if (response.ok) {
+                    const createdEmployee = await response.json();
+                    showMessage(`Сотрудник ${employee.last_name} ${employee.first_name} успешно добавлен`);
+                    document.getElementById('add-employee-form').reset();
+                    
+                    // Устанавливаем сегодняшнюю дату по умолчанию
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('hire-date').value = today;
+                    
+                    // Перезагружаем данные
+                    await loadEmployees();
+                    loadEmployeesForSalary();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при добавлении сотрудника', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при добавлении сотрудника', 'error');
+            }
+        }
+
+        async function showEmployeeDetails(employeeId) {
+            try {
+                const response = await fetch(`${API_URL}/employees/${employeeId}`);
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                
+                const employee = await response.json();
+                appState.selectedEmployee = employee;
+                
+                // Форматируем даты
+                const hireDate = new Date(employee.hire_date).toLocaleDateString('ru-RU');
+                
+                // Создаем HTML для модального окна
+                let modalHTML = `
+                    <div class="employee-info">
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: #475569; margin-bottom: 0.5rem;">Основная информация</h4>
+                            <p><strong>ФИО:</strong> ${employee.last_name} ${employee.first_name} ${employee.middle_name || ''}</p>
+                            <p><strong>Отдел:</strong> ${employee.department_code}${employee.department_name ? ` (${employee.department_name})` : ''}</p>
+                            <p><strong>Должность:</strong> ${employee.position_name}${employee.position_grade ? ` (${employee.position_grade})` : ''}</p>
+                            <p><strong>Дата приема:</strong> ${hireDate}</p>
+                            <p><strong>Текущая зарплата:</strong> ${formatSalary(employee.salary)}</p>
+                        </div>
+                `;
+                
+                // Добавляем историю зарплат если есть
+                if (employee.salary_history && employee.salary_history.length > 0) {
+                    modalHTML += `
+                        <div>
+                            <h4 style="color: #475569; margin-bottom: 0.5rem;">История зарплат</h4>
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: #e2e8f0;">
+                                            <th style="padding: 0.5rem; text-align: left;">Дата</th>
+                                            <th style="padding: 0.5rem; text-align: left;">Сумма</th>
+                                            <th style="padding: 0.5rem; text-align: left;">Причина</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${employee.salary_history.map(item => {
+                                            const date = new Date(item.date).toLocaleDateString('ru-RU');
+                                            return `
+                                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                                    <td style="padding: 0.5rem;">${date}</td>
+                                                    <td style="padding: 0.5rem;"><strong>${formatSalary(item.salary)}</strong></td>
+                                                    <td style="padding: 0.5rem;">${item.reason || '-'}</td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    modalHTML += `
+                        <div>
+                            <h4 style="color: #475569; margin-bottom: 0.5rem;">История зарплат</h4>
+                            <p style="color: #64748b; font-style: italic;">Нет данных</p>
+                        </div>
+                    `;
+                }
+                
+                modalHTML += '</div>';
+                
+                // Показываем модальное окно
+                document.getElementById('modal-title').textContent = `${employee.last_name} ${employee.first_name}`;
+                document.getElementById('modal-body').innerHTML = modalHTML;
+                document.getElementById('employee-modal').classList.add('show');
+                
+            } catch (error) {
+                console.error('Ошибка при загрузке данных сотрудника:', error);
+                showMessage('Ошибка при загрузке данных сотрудника', 'error');
+            }
+        }
+
+        async function deleteEmployee(employeeId) {
+            if (!confirm('Вы уверены, что хотите удалить этого сотрудника?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/employees/${employeeId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showMessage('Сотрудник успешно удален');
+                    
+                    // Перезагружаем данные
+                    await loadEmployees();
+                    loadEmployeesForSalary();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при удалении сотрудника', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при удалении сотрудника', 'error');
+            }
+        }
+
+        function loadEmployeesForSalary() {
+            const select = document.getElementById('employee-select');
+            const historySelect = document.getElementById('history-employee');
+            
+            select.innerHTML = '<option value="">Выберите сотрудника</option>';
+            historySelect.innerHTML = '<option value="">Выберите сотрудника</option>';
+            
+            appState.employees.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.last_name} ${emp.first_name} (${emp.department_code})`;
+                select.appendChild(option);
+                
+                const historyOption = option.cloneNode(true);
+                historySelect.appendChild(historyOption);
+            });
+        }
+
+        // ========== ЗАРПЛАТА ==========
+        async function updateSalary(e) {
+            e.preventDefault();
+            
+            const employeeId = document.getElementById('employee-select').value;
+            const salaryData = {
+                new_salary: parseInt(document.getElementById('new-salary').value),
+                change_date: document.getElementById('salary-date').value,
+                reason: document.getElementById('salary-reason').value.trim() || null
+            };
+            
+            // Валидация
+            if (!employeeId) {
+                showMessage('Выберите сотрудника', 'error');
+                return;
+            }
+            
+            if (!salaryData.new_salary || salaryData.new_salary <= 0) {
+                showMessage('Введите корректную сумму зарплаты', 'error');
+                return;
+            }
+            
+            if (!salaryData.change_date) {
+                showMessage('Укажите дату изменения', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/employees/${employeeId}/salary`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(salaryData)
+                });
+                
+                if (response.ok) {
+                    showMessage('Зарплата успешно обновлена');
+                    document.getElementById('update-salary-form').reset();
+                    
+                    // Устанавливаем сегодняшнюю дату по умолчанию
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('salary-date').value = today;
+                    
+                    // Перезагружаем данные
+                    await loadEmployees();
+                    loadEmployeesForSalary();
+                    loadSalaryHistory();
+                } else {
+                    const error = await response.json();
+                    showMessage(error.detail || 'Ошибка при изменении зарплаты', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка при изменении зарплаты', 'error');
+            }
+        }
+
+        async function loadSalaryHistory() {
+            const employeeId = document.getElementById('history-employee').value;
+            
+            if (!employeeId) {
+                document.getElementById('salary-history').innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <p>Выберите сотрудника для просмотра истории</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/employees/${employeeId}`);
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                
+                const employee = await response.json();
+                const tbody = document.getElementById('salary-history');
+                
+                if (!employee.salary_history || employee.salary_history.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <p>Нет истории зарплат</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Сортируем по дате (от новых к старым)
+                const sortedHistory = [...employee.salary_history].sort((a, b) => 
+                    new Date(b.date) - new Date(a.date)
+                );
+                
+                tbody.innerHTML = sortedHistory.map(item => {
+                    const date = new Date(item.date).toLocaleDateString('ru-RU');
+                    return `
+                        <tr>
+                            <td>${date}</td>
+                            <td><strong>${formatSalary(item.salary)}</strong></td>
+                            <td>${item.reason || '-'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Ошибка при загрузке истории зарплат:', error);
+                document.getElementById('salary-history').innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Ошибка загрузки истории</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+        function formatSalary(amount) {
+            return new Intl.NumberFormat('ru-RU', {
+                style: 'currency',
+                currency: 'RUB',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function closeModal() {
+            document.getElementById('employee-modal').classList.remove('show');
+            appState.selectedEmployee = null;
+        }
+
+        // Экспортируем функции для глобального использования
+        window.showTab = showTab;
+        window.addEmployee = addEmployee;
+        window.addDepartment = addDepartment;
+        window.addPosition = addPosition;
+        window.updateSalary = updateSalary;
+        window.loadEmployees = loadEmployees;
+        window.loadDepartments = loadDepartments;
+        window.loadPositions = loadPositions;
+        window.loadSalaryHistory = loadSalaryHistory;
+        window.showEmployeeDetails = showEmployeeDetails;
+        window.deleteEmployee = deleteEmployee;
+        window.deleteDepartment = deleteDepartment;
+        window.deletePosition = deletePosition;
+        window.checkSystemStatus = checkSystemStatus;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>
