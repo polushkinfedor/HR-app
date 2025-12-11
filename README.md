@@ -25,16 +25,28 @@
 ## Пример работы с программой
 
 -- Добавление сотрудника (employer)  
+  
 <img width="1291" height="1002" alt="image" src="https://github.com/user-attachments/assets/ddc7ecbe-e39f-4f17-8d62-b9631cf26b27" />
-
--- Добавление отдела (department)  
+  
+-- Добавление отдела (department)   
+  
 <img width="1291" height="1002" alt="image" src="https://github.com/user-attachments/assets/8ee8bbf9-7133-4481-9779-5a1060285e95" />
 
--- Добавление должности (position)
+-- Добавление должности (position)  
+  
 <img width="1291" height="1002" alt="image" src="https://github.com/user-attachments/assets/640a26e0-a935-4780-ad27-be07fe2a0ed2" />
-
--- Изменение зарплаты (change salary)
+  
+-- Изменение зарплаты (change salary)  
+  
 <img width="1291" height="1002" alt="image" src="https://github.com/user-attachments/assets/565e0388-55b1-488e-ab1f-baa68b1738b8" />
+
+-- Swager  
+  
+<img width="1464" height="1004" alt="image" src="https://github.com/user-attachments/assets/f145d69a-ef34-4830-b267-1bd94875dfe4" />  
+  
+-- Swager (schemas)  
+
+<img width="1464" height="791" alt="image" src="https://github.com/user-attachments/assets/68595801-1630-4066-9e87-5f704d21b844" />
 
 
 
